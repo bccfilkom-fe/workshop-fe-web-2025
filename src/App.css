@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@layer components {
+  .custom-list li {
+    @apply list-none text-base  pr-8 py-3 select-none cursor-pointer relative;
+  }
+
+  .custom-list li::before {
+    @apply absolute w-7 h-7 rounded-full border-2 border-[#002765] left-2 top-1/2 transform -translate-y-1/2 flex items-center justify-center;
+  }
+
+  .custom-list li.checked {
+    @apply text-[#555] line-through;
+  }
+
+  .custom-list li.checked::before {
+    @apply text-[#002765] bg-[#e0e7ff] border-[#002765];
+  }
+}
