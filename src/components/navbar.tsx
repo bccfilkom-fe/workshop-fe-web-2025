@@ -5,11 +5,12 @@ import BCC from "../assets/BCC.svg";
 import { NavLinks } from "../data/navlink";
 import { useToggleMenu } from "../hooks/useToggleMenu";
 import { useScroll } from "../hooks/useScroll";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Navbar() {
   const { isOpen, toggleMenu } = useToggleMenu();
   const { isScrolled } = useScroll();
-
+  const { darkMode, setDarkMode } = useTheme();
   return (
     <nav
       className={`w-full fixed top-0 left-0 z-50 transition-all duration-300 ${
@@ -55,8 +56,9 @@ export default function Navbar() {
               className="px-4 py-2 rounded transition duration-300 
                      bg-gray-800 text-white hover:bg-gray-700 
                      dark:bg-yellow-400 dark:text-gray-900 dark:hover:bg-yellow-500 dark:hover:text-gray-800"
+              onClick={() => setDarkMode((prev) => !prev)}
             >
-              Dark Mode
+              {darkMode ? "Light Mode" : "Dark Mode"}
             </Button>
           </div>
         </div>

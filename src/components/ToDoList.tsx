@@ -1,12 +1,43 @@
 import { Trash2, Edit, Check } from "lucide-react";
 import { Button } from "./button";
+import { useEffect, useReducer, useState } from "react";
+import { loadTask, taskReducer } from "../reducer/task";
+import { addTask, deleteTask, toggleTask, updateTask } from "../actions/task";
 
 export default function ToDoList() {
-  const dummyTasks = [
-    { id: 1, text: "Task contoh 1", completed: false },
-    { id: 2, text: "Task contoh 2", completed: true},
-    { id: 3, text: "Task contoh 3", completed: false },
-  ];
+  const [task, dispatch] = useReducer(taskReducer, [], loadTask);
+  const [newTask, setNewTask] = useState("");
+  const [editTask, setEditTask] = useState("");
+  const [editingTaskid, setEditingTaskId] = useState<number | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(task));
+  }, [task]);
+
+  const handleAddTask = () => {
+    if (newTask.trim() === "") return;
+    dispatch(addTask(newTask));
+    setNewTask("");
+  };
+  const handleDeleteTask = (id: number) => {
+    dispatch(deleteTask(id));
+  };
+
+  const handleToggleTask = (id: number) => {
+    dispatch(toggleTask(id));
+  };
+
+  const startEditing = (id: number, text: string) => {
+    setEditingTaskId(id);
+    setEditTask(text);
+  };
+
+  const handleSaveEditing = (id: number) => {
+    if (editTask.trim() === "") return;
+    dispatch(updateTask(id, editTask));
+    setEditingTaskId(null);
+    setEditTask("");
+  };
 
   return (
     <div className="w-full max-w-xl bg-white dark:bg-gray-900 mt-24 mb-5 pt-10 px-7 pb-16 mx-auto border rounded-2xl dark:border-gray-700">
@@ -18,43 +49,65 @@ export default function ToDoList() {
           type="text"
           placeholder="Add text"
           className="flex flex-1 border-0 outline-0 bg-transparent border-[#002765] focus:outline-none dark:text-white dark:placeholder-gray-400"
+          value={newTask}
+          onChange={(e) => setNewTask(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
         />
-        <Button className="border-none text-lg rounded-full outline-0 px-12 py-2 text-white bg-[#002765] dark:bg-blue-600 dark:hover:bg-blue-700">
+        <Button
+          onClick={handleAddTask}
+          className="border-none text-lg rounded-full outline-0 px-12 py-2 text-white bg-[#002765] dark:bg-blue-600 dark:hover:bg-blue-700"
+        >
           Add
         </Button>
       </div>
       <div className="max-h-48 overflow-y-auto">
         <ul className="custom-list relative list-none text-base px-3 pt-2 pb-12 select-none cursor-pointer text-[#002765] dark:text-white space-y-2">
-          {dummyTasks.map((task) => (
+          {task.map((task) => (
             <li key={task.id} className="flex items-center justify-between">
               <div className="flex items-center">
                 <span
                   className={`w-7 h-7 rounded-full border-2 border-[#002765] dark:border-gray-500 flex items-center justify-center mr-3 ${
                     task.completed ? "bg-[#e0e7ff] dark:bg-blue-200" : ""
                   }`}
+                  onClick={() => handleToggleTask(task.id)}
                 >
                   {task.completed && "✓"}
                 </span>
-                {task.id === 2 ? ( 
+                {task.id === editingTaskid ? (
                   <input
                     type="text"
-                    value="Task contoh 2"
+                    value={editTask}
+                    onChange={(e) => setEditTask(e.target.value)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && handleSaveEditing(task.id)
+                    }
                     className="border-0 outline-0 bg-transparent focus:outline-none dark:text-white"
-                    readOnly
                   />
                 ) : (
-                  <span className={task.completed ? "line-through" : ""}>
+                  <span
+                    className={task.completed ? "line-through" : ""}
+                    onClick={() => handleToggleTask(task.id)}
+                  >
                     {task.text}
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                {task.id === 2 ? (
-                  <Check className="w-5 h-5 text-green-500 dark:text-green-400" />
+                {task.id === editingTaskid ? (
+                  <Check
+                    className="w-5 h-5 text-green-500 dark:text-green-400"
+                    onClick={() => handleSaveEditing(task.id)}
+                  />
                 ) : (
-                  <Edit className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                  <Edit
+                    className="w-5 h-5 text-blue-500 dark:text-blue-400"
+                    onClick={() => startEditing(task.id, task.text)}
+                  />
                 )}
-                <Trash2 className="w-5 h-5 text-red-500 dark:text-red-400" />
+                <Trash2
+                  className="w-5 h-5 text-red-500 dark:text-red-400"
+                  onClick={() => handleDeleteTask(task.id)}
+                />
               </div>
             </li>
           ))}

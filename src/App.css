@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 @layer components {
   .custom-list li {
     @apply list-none text-base  pr-8 py-3 select-none cursor-pointer relative;
