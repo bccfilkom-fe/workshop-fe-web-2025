@@ -1,4 +1,4 @@
-import Navbar from "../components/navbar";
+import Navbar from "../components/shared/navbar";
 import { ThemeProvider } from "../context/ThemeContext";
 
 export default function MainLayout({

@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 
-export const useToggleMenu = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+export const useToggleMenu = (
+  isOpen: boolean,
+  setIsOpen: Dispatch<SetStateAction<boolean>>
+) => {
   const toggleMenu = () => setIsOpen((prev) => !prev);
   return { isOpen, toggleMenu };
 };

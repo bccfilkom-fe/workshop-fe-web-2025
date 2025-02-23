@@ -1,14 +1,19 @@
-import { Link } from "react-router-dom";
-import { Button } from "./button";
 import { Menu, X } from "lucide-react";
-import BCC from "../assets/BCC.svg";
-import { NavLinks } from "../data/navlink";
-import { useToggleMenu } from "../hooks/useToggleMenu";
-import { useScroll } from "../hooks/useScroll";
-import { useTheme } from "../context/ThemeContext";
+
+import BCC from "../../assets/BCC.svg";
+import { Button } from "./button";
+import { Link } from "react-router-dom";
+import { NavLinks } from "../../data/navlink";
+import { useScroll } from "../../hooks/useScroll";
+import { useState } from "react";
+import { useTheme } from "../../context/ThemeContext";
+import { useToggleMenu } from "../../hooks/useToggleMenu";
 
 export default function Navbar() {
-  const { isOpen, toggleMenu } = useToggleMenu();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const { isOpen: menuOpen, toggleMenu } = useToggleMenu(isOpen, setIsOpen);
+
   const { isScrolled } = useScroll();
   const { darkMode, setDarkMode } = useTheme();
   return (
@@ -31,7 +36,7 @@ export default function Navbar() {
               className="text-white focus:outline-none md:hidden"
               aria-label="Toggle Menu"
             >
-              {isOpen ? <X size={24} /> : <Menu size={24} />}
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
             </Button>
           </div>
 

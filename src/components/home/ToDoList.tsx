@@ -1,8 +1,14 @@
-import { Trash2, Edit, Check } from "lucide-react";
-import { Button } from "./button";
+import {
+  addTask,
+  deleteTask,
+  toggleTask,
+  updateTask,
+} from "../../actions/task";
+import { loadTask, taskReducer } from "../../reducer/task";
 import { useEffect, useReducer, useState } from "react";
-import { loadTask, taskReducer } from "../reducer/task";
-import { addTask, deleteTask, toggleTask, updateTask } from "../actions/task";
+
+import { Button } from "../shared/button";
+import ToDoItem from "./ToDoItem";
 
 export default function ToDoList() {
   const [task, dispatch] = useReducer(taskReducer, [], loadTask);
@@ -62,54 +68,18 @@ export default function ToDoList() {
       </div>
       <div className="max-h-48 overflow-y-auto">
         <ul className="custom-list relative list-none text-base px-3 pt-2 pb-12 select-none cursor-pointer text-[#002765] dark:text-white space-y-2">
-          {task.map((task) => (
-            <li key={task.id} className="flex items-center justify-between">
-              <div className="flex items-center">
-                <span
-                  className={`w-7 h-7 rounded-full border-2 border-[#002765] dark:border-gray-500 flex items-center justify-center mr-3 ${
-                    task.completed ? "bg-[#e0e7ff] dark:bg-blue-200" : ""
-                  }`}
-                  onClick={() => handleToggleTask(task.id)}
-                >
-                  {task.completed && "✓"}
-                </span>
-                {task.id === editingTaskid ? (
-                  <input
-                    type="text"
-                    value={editTask}
-                    onChange={(e) => setEditTask(e.target.value)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && handleSaveEditing(task.id)
-                    }
-                    className="border-0 outline-0 bg-transparent focus:outline-none dark:text-white"
-                  />
-                ) : (
-                  <span
-                    className={task.completed ? "line-through" : ""}
-                    onClick={() => handleToggleTask(task.id)}
-                  >
-                    {task.text}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {task.id === editingTaskid ? (
-                  <Check
-                    className="w-5 h-5 text-green-500 dark:text-green-400"
-                    onClick={() => handleSaveEditing(task.id)}
-                  />
-                ) : (
-                  <Edit
-                    className="w-5 h-5 text-blue-500 dark:text-blue-400"
-                    onClick={() => startEditing(task.id, task.text)}
-                  />
-                )}
-                <Trash2
-                  className="w-5 h-5 text-red-500 dark:text-red-400"
-                  onClick={() => handleDeleteTask(task.id)}
-                />
-              </div>
-            </li>
+          {task.map((task, idx) => (
+            <ToDoItem
+              key={idx * 101}
+              task={task}
+              editTask={editTask}
+              setEditTask={setEditTask}
+              editingTaskid={editingTaskid}
+              startEditing={startEditing}
+              handleDeleteTask={handleDeleteTask}
+              handleSaveEditing={handleSaveEditing}
+              handleToggleTask={handleToggleTask}
+            />
           ))}
         </ul>
       </div>
