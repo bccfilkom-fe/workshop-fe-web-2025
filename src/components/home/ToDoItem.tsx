@@ -6,12 +6,12 @@ import { Task } from "../../actions/task";
 interface ITodoItem {
   task: Task;
   editTask: string;
-  handleToggleTask: (id: number) => void;
+  handleToggleTask: (id: number | string) => void;
   setEditTask: Dispatch<SetStateAction<string>>;
-  editingTaskid: number | null;
-  handleSaveEditing: (id: number) => void;
-  startEditing: (id: number, text: string) => void;
-  handleDeleteTask: (id: number) => void;
+  editingTaskid: number | string | null;
+  handleSaveEditing: (id: number | string) => void;
+  startEditing: (id: number | string, text: string) => void;
+  handleDeleteTask: (id: number | string) => void;
 }
 
 const ToDoItem = ({
@@ -37,6 +37,7 @@ const ToDoItem = ({
         </span>
         {task.id === editingTaskid ? (
           <input
+            title="edit"
             type="text"
             value={editTask}
             onChange={(e) => setEditTask(e.target.value)}
